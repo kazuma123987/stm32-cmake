@@ -1,0 +1,92 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Debug",
+            "type": "shell",
+            "command": [
+                "./build.bat Debug"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Release",
+            "type": "shell",
+            "command": [
+                "./build.bat Release"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "1.download && debug",
+            "type": "shell",
+            "command": [
+                "openocd"
+            ],
+            "args": [
+                "-f",
+                "stlink.cfg",
+                "-f",
+                "stm32f1x.cfg",
+                "-c",
+                "program ../build/demo.bin verify reset exit"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/openocd_file"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "dependsOn": [
+                "Debug"
+            ]
+        },
+        {
+            "label": "2.download",
+            "type": "shell",
+            "command": [
+                "openocd"
+            ],
+            "args": [
+                "-f",
+                "openocd.cfg",
+                "-c",
+                "program ../build/demo.bin 0x08000000 exit reset",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/openocd_file"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "dependsOn": [
+                "Release"
+            ]
+        },
+        {
+            "label": "3.clean",
+            "type": "shell",
+            "command": [
+                "rm -r build/*"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+        }
+    ]
+}

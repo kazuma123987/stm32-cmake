@@ -1,0 +1,12 @@
+LR_CUSTOM_IROM1 0x08000000 0x00080000  {    ; load region size_region
+  ER_CUSTOM_IROM1 0x08000000 0x00080000  {  ; load address = execution address
+   *.o (RESET, +First)
+   *(InRoot$$Sections)
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+  RW_CUSTOM_IRAM1 0x20000000 0x00010000  {  ; RW data
+   .ANY (+RW +ZI)
+  }
+}
+

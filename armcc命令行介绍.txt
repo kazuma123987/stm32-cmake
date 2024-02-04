@@ -1,0 +1,35 @@
+下面是keil的命令行参数:
+armcc:
+--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ../../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../../Drivers/STM32F1xx_HAL_Driver/Inc -I ../../Drivers/CMSIS/Include -I ../../Drivers/ -I ../../User -I ../../Middlewares
+-IC:/Users/34181/AppData/Local/Arm/Packs/Keil/STM32F1xx_DFP/2.4.1/Device/Include
+-D__UVISION_VERSION="536" -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE
+-o ..\..\Output\*.o --omf_browse ..\..\Output\*.crf --depend ..\..\Output\*.d
+
+armasm:
+--cpu Cortex-M3 -g --apcs=interwork 
+-I C:\Users\34181\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include 
+--pd "__UVISION_VERSION SETA 536" --pd "STM32F10X_HD SETA 1" --list "..\..\Output\*.lst" --xref -o "*.o" --depend "*.d" 
+
+armlink:
+--cpu Cortex-M3 *.o 
+--strict --scatter "..\..\Output\atk_f103.sct" 
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list "..\..\Output\atk_f103.map" 
+-o ..\..\Output\atk_f103.axf 
+
+armclang:
+-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m3 -c
+-fno-rtti -flto -funsigned-char -fshort-enums -fshort-wchar
+-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -I ../../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../../Drivers/STM32F1xx_HAL_Driver/Inc -I ../../Drivers/CMSIS/Include -I ../../Drivers/ -I ../../User -I ../../Middlewares
+-IC:/Users/34181/AppData/Local/Arm/Packs/Keil/STM32F1xx_DFP/2.4.1/Device/Include
+-D__UVISION_VERSION="536" -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE
+-o ../../Output/*.o -MD
+
+armlink(armclang):
+--cpu Cortex-M3 --lto *.o
+--strict --scatter "..\..\Output\atk_f103.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "..\..\Output\atk_f103.map"
+-o ..\..\Output\atk_f103.axf

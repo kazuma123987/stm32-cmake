@@ -1,0 +1,20 @@
+1.vscode插件:
+a.Cortex-Debug:用于调试ARM芯片(自带内存查看和rtos等拓展工具)
+b.Embedded IDE:其axf2elf工具可以把armcc生成的.elf文件(实则是axf文件格式)转换成真正的.elf文件进行调试
+c.C/C++:提供C/C++的语法高亮和自动补充
+
+2.环境变量配置:
+a.下载openocd并将其bin文件夹添加到环境变量path中
+b.下载cmake,如果是setup程序直接安装即可
+c.下载make、ninja等构建工具并将exe文件所在路径添加到环境变量path中
+d.将eide插件的axf2elf工具的bin文件夹(C:\Users\34181\.eide\bin\builder\bin)添加到环境变量path中
+e.下载arm-none-eabi-gcc工具并将其第一个bin文件夹添加到环境变量path中(为了使用arm-none-eabi-gdb)
+g.将keil的ARMCC和ARMCLANG的bin文件夹分别添加到环境变量path中(支持armcc和armclang编译器)
+
+3.项目配置方法:
+a.直接复制.vscode文件夹、openocd_file、scripts、build.bat、CMakeLists.txt
+b.在build.bat中指定工具链路径
+c.在openocd_file中指定芯片的svd文件,并修改openocd.cfg文件(改法见openocd.cfg文件的注释)
+d.如果有需要,可以修改scripts文件夹的脚本的编译选项
+e.在CMakeLists.txt中指定自己的链接脚本(gcc是.ld,armcc和armclang是.sct)、源文件和头文件、启动文件
+f.如果选择了cortex_m脚本,那CMakeLists.txt的add_executable和add_custom_command函数中的${PROJECT_NAME}要改为${PROJECT_NAME}.elf

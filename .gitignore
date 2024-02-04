@@ -1,0 +1,34 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+
+# Linker output
+*.htm
+*.lst
+*.ctf
+*.ilk
+*.map
+*.exp
+
+# Executables
+*.axf
+*.elf
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+
+# big files
+*.mp4
+*.fbx
+build/*

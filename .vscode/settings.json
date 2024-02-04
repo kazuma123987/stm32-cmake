@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.c": "c",
+        "sys.h": "c",
+        "atk_ncr.h": "c",
+        "touch.h": "c",
+        "delay.h": "c",
+        "stdio.h": "c",
+        "stm32f1xx.h": "c",
+        "usart.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": false
+}
