@@ -1,6 +1,5 @@
 # 目标平台名称；
 set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR Cortex-M3)
 
 # 编译工具链； 请确保已经添加到环境变量； 如果使用的是 linux 环境，需要将后面的 '.exe' 移除；
 set(CMAKE_C_COMPILER armcc.exe)
@@ -10,9 +9,6 @@ set(CMAKE_LINKER armlink.exe)
 set(AR armar.exe)
 set(OBJCOPY fromelf.exe)
 
-# # 使用的 C/C++版本；
-# set(CMAKE_C_STANDARD 99)
-# set(CMAKE_CXX_STANDARD 11)
 # 生成 compile_commands.json，可配合 clangd 实现精准的代码关联与跳转；
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 # 彩色日志输出；

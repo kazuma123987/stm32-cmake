@@ -20,12 +20,20 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # 平台相关宏定义
 add_definitions(-DUSE_HAL_DRIVER -DSTM32F103xE -DSTM32F10X_HD)
 
-# 指定链接文件；
-# set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103ZETx_FLASH.ld)
-set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/demo.sct)
-# 指定链接选项 
-set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS}")
-# set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS} ${LINKER_FILE_FLAGS} ${LINKER_SCRIPT}")
+#根据是否使用gcc编译器设置target、链接脚本、链接器命令行参数、汇编文件、是否启用axf到elf的转换
+if(_USE_GCC)
+  set(CUSTOM_TARGET_NAME ${OUTPUT_EXE_NAME}.elf)
+  set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/tools/STM32F103ZETx_FLASH.ld)
+  set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS} ${LINKER_FILE_FLAGS} ${LINKER_SCRIPT}")
+  set(STARTUP_FILE ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xe.s)
+  set(CONVERT_COMMAND "")
+else()
+  set(CUSTOM_TARGET_NAME ${OUTPUT_EXE_NAME})
+  set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/tools/demo.sct)
+  set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS}")
+  set(STARTUP_FILE ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103xe.s)
+  set(CONVERT_COMMAND axf2elf -d "C:\\Keil_v5\\ARM\\ARMCC" -b ".\\${OUTPUT_EXE_NAME}.bin" -i ".\\${OUTPUT_EXE_NAME}.elf" -o ".\\${OUTPUT_EXE_NAME}.elf" > ".\\${OUTPUT_EXE_NAME}.log")
+endif()
 
 # 输出编译类型
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
@@ -67,6 +75,7 @@ include_directories(
   ${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT
   # 应用层头文件包含路径；
   ${PATH_WORKSPACE_ROOT}/User)
+
 # 驱动层源文件
 file(
   GLOB
@@ -82,22 +91,21 @@ file(
   ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/delay/delay.c
   ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/sys/sys.c)
   # ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/usart/usart.c)
-
-#过滤不要的文件
+#并过滤不要的文件
 list(FILTER DRIVER_SOURCE EXCLUDE REGEX ".*_template\\.c$")
+
 # 中间层源文件
 file(GLOB MIDDLE_SOURCE 
 ${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT/*.c
 ${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT/SYSCALLS/*.c)
+
 # 用户源文件
 file(GLOB USER_SOURCE ${PATH_WORKSPACE_ROOT}/User/*.c
      ${PATH_WORKSPACE_ROOT}/User/*.cpp)
-# 启动文件
-# set(STARTUP_FILE ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xe.s)
-set(STARTUP_FILE ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103xe.s)
+
 # 生成可执行文件
 add_executable(
-  ${PROJECT_NAME}
+  ${CUSTOM_TARGET_NAME}
   ${DRIVER_SOURCE}
   ${MIDDLE_SOURCE}
   ${USER_SOURCE}
@@ -105,12 +113,12 @@ add_executable(
   
 # 把elf转换为bin和hex
 add_custom_command(
-  TARGET ${PROJECT_NAME}
+  TARGET ${CUSTOM_TARGET_NAME}
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan "Building ${OUTPUT_EXE_NAME}.bin and ${OUTPUT_EXE_NAME}.hex"
-  COMMAND ${OBJCOPY} ${PROJECT_NAME}.elf ${OBJCOPY_BIN} ${OBJCOPY_OUT} ${OUTPUT_EXE_NAME}.bin
-  COMMAND ${OBJCOPY} ${PROJECT_NAME}.elf ${OBJCOPY_HEX} ${OBJCOPY_OUT} ${OUTPUT_EXE_NAME}.hex
-  COMMAND axf2elf -d "C:\\Keil_v5\\ARM\\ARMCC" -b ".\\${PROJECT_NAME}.bin" -i ".\\${PROJECT_NAME}.elf" -o ".\\${PROJECT_NAME}.elf" > ".\\${PROJECT_NAME}.log"
+  COMMAND ${OBJCOPY} ${OUTPUT_EXE_NAME}.elf ${OBJCOPY_BIN} ${OBJCOPY_OUT} ${OUTPUT_EXE_NAME}.bin
+  COMMAND ${OBJCOPY} ${OUTPUT_EXE_NAME}.elf ${OBJCOPY_HEX} ${OBJCOPY_OUT} ${OUTPUT_EXE_NAME}.hex
+  COMMAND ${CONVERT_COMMAND}
   COMMAND
     ${CMAKE_COMMAND} -E cmake_echo_color --blue
     "Build ${OUTPUT_EXE_NAME}.bin and ${OUTPUT_EXE_NAME}.hex successfully!")

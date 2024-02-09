@@ -30,30 +30,7 @@
             }
         },
         {
-            "label": "1.download && debug",
-            "type": "shell",
-            "command": [
-                "openocd"
-            ],
-            "args": [
-                "-f",
-                "tools/openocd.cfg",
-                "-c",
-                "program build/demo.bin verify reset exit"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "dependsOn": [
-                "Debug"
-            ]
-        },
-        {
-            "label": "2.download(openocd)",
+            "label": "1.download(openocd)",
             "type": "shell",
             "command": [
                 "openocd"
@@ -76,7 +53,7 @@
             ]
         },
         {
-            "label": "2.download(jlink)",
+            "label": "1.download(jlink)",
             "type": "shell",
             "command": [
                 "JLink -autoconnect 1 -device STM32F103ZE -if swd -speed 4000 -commandfile ./tools/download.jlink"
@@ -93,7 +70,7 @@
             ]
         },
         {
-            "label": "3.clean",
+            "label": "2.clean",
             "type": "shell",
             "command": [
                 "rm -r build/*"

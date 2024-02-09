@@ -6,30 +6,6 @@
             "executable": "./build/demo.elf",
             "request": "launch",
             "type": "cortex-debug",
-            "servertype": "jlink",
-            "runToEntryPoint": "main",
-            "svdFile": "tools/STM32F103.svd",
-            "configFiles": [
-                "tools/openocd.cfg"
-            ],
-            "device": "STM32F103ZE",
-            "interface": "swd",
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "Debug"
-        }
-    ]
-}
-{
-    // 使用 IntelliSense 了解相关属性。 
-    // 悬停以查看现有属性的描述。
-    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Cortex Debug",
-            "executable": "./build/demo.elf",
-            "request": "launch",
-            "type": "cortex-debug",
             "servertype": "openocd",
             "runToEntryPoint": "main",
             "svdFile": "tools/STM32F103.svd",

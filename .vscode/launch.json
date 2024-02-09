@@ -7,7 +7,7 @@
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "jlink",
-            "runToEntryPoint": "Reset_Handler",
+            "runToEntryPoint": "main",
             "svdFile": "tools/STM32F103.svd",
             "serverArgs": ["-speed","4000"],
             "device": "STM32F103ZE",

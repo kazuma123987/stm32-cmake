@@ -23,6 +23,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 set(CPU_FLAGS "--target=arm-arm-none-eabi -mcpu=cortex-m3 -mlittle-endian")
 set(CPU_FLAGS_ASM "--cpu=Cortex-M3")
 set(FPU_FLAGS "")
+set(FPU_FLAGS_ASM "")
 # 设置编译选项一般XXX_FLAGS代表全局的,XXX_FLAGS_DEBUG表示额外新增的
 # 设置armcc编译选项
 set(CMAKE_C_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} -xc -std=c99 -fno-function-sections -funsigned-char -fno-rtti  -fshort-enums \
@@ -39,7 +40,7 @@ set(CMAKE_CXX_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} -xc++ -std=c++11 -fno-function-se
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
 # 设置armasm编译选项
-set(CMAKE_ASM_FLAGS "${CPU_FLAGS_ASM} --list=demo.lst --xref")
+set(CMAKE_ASM_FLAGS "${CPU_FLAGS_ASM} ${FPU_FLAGS_ASM} --list=demo.lst --xref")
 set(CMAKE_ASM_FLAGS_DEBUG "-g")
 set(CMAKE_ASM_FLAGS_RELEASE "")
 # 设置链接选项

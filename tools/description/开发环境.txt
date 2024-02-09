@@ -2,6 +2,10 @@
 a.Cortex-Debug:用于调试ARM芯片(自带内存查看和rtos等拓展工具)
 b.Embedded IDE:其axf2elf工具可以把armcc生成的.elf文件(实则是axf文件格式)转换成真正的.elf文件进行调试
 c.C/C++:提供C/C++的语法高亮和自动补充
+d.ASM Code Lens:提供汇编文件的语法高亮与跳转
+e.Better Comments:提供醒目的注释效果
+f.GNU Linker Map files:提供.map文件的语法高亮
+g.LinkerScripts:提供.ld文件的语法高亮
 
 2.环境变量配置:
 a.下载openocd并将其bin文件夹添加到环境变量path中
@@ -12,9 +16,46 @@ e.下载arm-none-eabi-gcc工具并将其第一个bin文件夹添加到环境变�
 g.将keil的ARMCC和ARMCLANG的bin文件夹分别添加到环境变量path中(支持armcc和armclang编译器)
 
 3.项目配置方法:
-a.直接复制.vscode文件夹、openocd_file、scripts、build.bat、CMakeLists.txt
-b.在build.bat中指定工具链路径
-c.在openocd_file中指定芯片的svd文件,并修改openocd.cfg文件(改法见openocd.cfg文件的注释)
-d.如果有需要,可以修改scripts文件夹的脚本的编译选项
-e.在CMakeLists.txt中指定自己的链接脚本(gcc是.ld,armcc和armclang是.sct)、源文件和头文件、启动文件
-f.如果选择了cortex_m脚本,那CMakeLists.txt的add_executable和add_custom_command函数中的${PROJECT_NAME}要改为${PROJECT_NAME}.elf
+直接复制.vscode文件夹、tools文件夹、CMakeLists.txt，然后修改以下文件(必需):
+tools/build.bat(必需):
+     -DCMAKE_TOOLCHAIN_FILE=后面指定工具链路径,_D_USE_GCC=ON表示使用的gcc,为OFF则使用armcc或者armclang
+
+tools文件夹(必需):
+    将芯片的svd文件复制到当前目录,并在.vscode/launch.json中修改svdFile的路径
+
+tools/openocd.cfg(满足以下条件必需):
+    如果launch.json的"servertype"是"openocd"则需要修改,改法见openocd.cfg文件的注释
+
+tools/scripts(满足以下条件必需):
+    cmake脚本的编译选项,如果使用的是armcc.cmake或者armclang.cmake则需要修改,改法如下:
+
+tools/scripts/armcc.cmake:
+    根据内核型号改变CPU_FLAGS、FPU_FLAGS的值
+
+tools/scripts/armclang.cmake:
+    根据内核型号改变CPU_FLAGS、FPU_FLAGS、CPU_FLAGS_ASM、FPU_FLAGS_ASM的值,后缀为_ASM的采用的AC5的命令行方式,例如--cpu Cortex-M3
+
+tools/download.jlink:
+    如果需要修改则自行百度查看jlink脚本选项,如果修改此文件名字则需要在tasks.json的"1.download(jlink)"中修改command中的
+    -commandfile ./tools/download.jlink为-commandfile path/to/your/jlinkscript
+
+CMakeLists.txt(必需):
+    修改自己的项目根目录
+    如果修改输出文件名,还要在
+    根据是否使用gcc(_USE_GCC)修改链接脚本(gcc是.ld,armcc和armclang是.sct)、源文件、启动文件
+    修改项目头文件
+    
+.vscode/launch.json(必需):
+    1.如果使用openocd调试,修改launch.json为launch(jlink).json,并把launch(openocd).json改为launch.json,
+    然后修改launch.json里面的svdFile为你的.svd文件路径,修改executable为你的.elf文件路径,并根据需要修改其他参数
+    2.如果使用jlink调试,修改launch.json为launch(openocd).json,并把launch(jlink).json改为launch.json,
+    然后修改device为你的mcu型号,修改launch.json里面的svdFile为你的.svd文件路径,修改executable为你的.elf文件路径,
+    并根据需要修改其他参数
+
+.vscode/c_cpp_properties.json:
+    按住Ctrl+Shift+P键调用"C/C++编译配置(UI)"设置你的头文件路径(可以识别include)、
+    编译器路径(可以设置更准确的IntelliSense)、IntelliSense模式(指定IntelliSense的平台)、C/C++标准(仅适用于gcc)
+
+.vscode/tasks.json(必需):
+    1.如果使用openocd调试,修改1.download(openocd)中的args中的program ./build/demo.bin 0x08000000为你的.bin路径、起始地址
+    2.如果使用jlink调试,修改1.download(jlink)中的-device STM32F103ZE为你的device,如果有需要,你可以修改speed、swd之类的设置

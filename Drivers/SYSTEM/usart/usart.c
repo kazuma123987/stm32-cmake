@@ -85,12 +85,12 @@ int fputc(int ch, FILE *f)
     USART_UX->DR = (uint8_t)ch; /* 将要发送的字符 ch 写入到DR寄存器 */
     return ch;
 }
-// #ifdef __GNUC__
-// int _write(int fd, char *ptr, int len)
-// {
-//     return HAL_UART_Transmit(&g_uart1_handle, (uint8_t *)ptr, len, 0xFFFF);
-// }
-// #endif
+#ifdef __GNUC__
+int _write(int fd, char *ptr, int len)
+{
+    return HAL_UART_Transmit(&g_uart1_handle, (uint8_t *)ptr, len, 0xFFFF);
+}
+#endif
 #endif
 /******************************************************************************************/
 
