@@ -64,6 +64,7 @@ include_directories(
   ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Include
   # 中间件头文件路径:
   ${PATH_WORKSPACE_ROOT}/Middlewares
+  ${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT
   # 应用层头文件包含路径；
   ${PATH_WORKSPACE_ROOT}/User)
 # 驱动层源文件
@@ -79,19 +80,15 @@ file(
   ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
   ${PATH_WORKSPACE_ROOT}/Drivers/STM32F1xx_HAL_Driver/Src/*.c
   ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/delay/delay.c
-  ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/sys/sys.c
-  ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/usart/usart.c)
+  ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/sys/sys.c)
+  # ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/usart/usart.c)
 
 #过滤不要的文件
-# list(
-#   REMOVE_ITEM
-#   DRIVER_SOURCE
-#   ${PATH_WORKSPACE_ROOT}/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_timebase_tim_template.c
-#   ${PATH_WORKSPACE_ROOT}/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_timebase_rtc_alarm_template.c
-# )
 list(FILTER DRIVER_SOURCE EXCLUDE REGEX ".*_template\\.c$")
-# # 中间层源文件
-# file(GLOB MIDDLE_SOURCE ${PATH_WORKSPACE_ROOT}/Middlewares/USMART/*.c)
+# 中间层源文件
+file(GLOB MIDDLE_SOURCE 
+${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT/*.c
+${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT/SYSCALLS/*.c)
 # 用户源文件
 file(GLOB USER_SOURCE ${PATH_WORKSPACE_ROOT}/User/*.c
      ${PATH_WORKSPACE_ROOT}/User/*.cpp)

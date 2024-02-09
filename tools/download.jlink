@@ -1,0 +1,5 @@
+reset
+erase
+loadfile build/demo.bin 0x0 
+r 
+qc 

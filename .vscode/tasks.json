@@ -5,7 +5,7 @@
             "label": "Debug",
             "type": "shell",
             "command": [
-                "./build.bat Debug"
+                "tools/build.bat Debug"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -19,7 +19,7 @@
             "label": "Release",
             "type": "shell",
             "command": [
-                "./build.bat Release"
+                "tools/build.bat Release"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -37,14 +37,12 @@
             ],
             "args": [
                 "-f",
-                "stlink.cfg",
-                "-f",
-                "stm32f1x.cfg",
+                "tools/openocd.cfg",
                 "-c",
-                "program ../build/demo.bin verify reset exit"
+                "program build/demo.bin verify reset exit"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/openocd_file"
+                "cwd": "${workspaceFolder}"
             },
             "group": {
                 "kind": "build",
@@ -55,19 +53,36 @@
             ]
         },
         {
-            "label": "2.download",
+            "label": "2.download(openocd)",
             "type": "shell",
             "command": [
                 "openocd"
             ],
             "args": [
                 "-f",
-                "openocd.cfg",
+                "tools/openocd.cfg",
                 "-c",
-                "program ../build/demo.bin 0x08000000 exit reset",
+                "program ./build/demo.bin 0x08000000 exit reset",
             ],
             "options": {
-                "cwd": "${workspaceFolder}/openocd_file"
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "dependsOn": [
+                "Release"
+            ]
+        },
+        {
+            "label": "2.download(jlink)",
+            "type": "shell",
+            "command": [
+                "JLink -autoconnect 1 -device STM32F103ZE -if swd -speed 4000 -commandfile ./tools/download.jlink"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
             },
             "group": {
                 "kind": "build",

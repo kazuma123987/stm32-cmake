@@ -1,0 +1,2 @@
+SEGGER_RTT.Conf.h:配置文件
+SYSCALLS:内含多个编译器的printf重定向,如果不适用里面的SYSCALLS,将只能使用RTT的打印函数,不能使用printf进行虚拟串口打印

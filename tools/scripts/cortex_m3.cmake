@@ -1,9 +1,9 @@
 # 目标平台名称；
 SET(CMAKE_SYSTEM_NAME Generic)
-SET(CMAKE_SYSTEM_PROCESSOR cortex-m3)
+# SET(CMAKE_SYSTEM_PROCESSOR cortex-m3)
 
-SET(THREADX_ARCH "cortex_m3")
-SET(THREADX_TOOLCHAIN "gnu")
+# SET(THREADX_ARCH "cortex_m3")
+# SET(THREADX_TOOLCHAIN "gnu")
 
 SET(MCPU_FLAGS "-mthumb -mcpu=cortex-m3")
 SET(VFP_FLAGS "")
