@@ -54,8 +54,12 @@ CMakeLists.txt(必需):
 
 .vscode/c_cpp_properties.json:
     按住Ctrl+Shift+P键调用"C/C++编译配置(UI)"设置你的头文件路径(可以识别include)、
-    编译器路径(可以设置更准确的IntelliSense)、IntelliSense模式(指定IntelliSense的平台)、C/C++标准(仅适用于gcc)
+    编译器路径(可以设置更准确的IntelliSense)、IntelliSense模式(指定IntelliSense的平台)、C/C++标准(仅适用于gcc)、
+    宏定义(十分重要,有利于IntelliSense分析,否则一片红色错误)
 
 .vscode/tasks.json(必需):
     1.如果使用openocd调试,修改1.download(openocd)中的args中的program ./build/demo.bin 0x08000000为你的.bin路径、起始地址
     2.如果使用jlink调试,修改1.download(jlink)中的-device STM32F103ZE为你的device,如果有需要,你可以修改speed、swd之类的设置
+
+4.关于jlink的虚拟串口(RTT):
+如果使用了RTT的打印函数,则不能把usart.c添加到源文件中
