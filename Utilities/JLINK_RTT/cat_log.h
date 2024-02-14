@@ -15,14 +15,14 @@
 
 
 #define LOG_PROTO(type,color,format,...)            \
-        SEGGER_RTT_printf(0,"  %s%s"format"\r\n%s", \
+        SEGGER_RTT_printf(0,"  %s%s" format "\r\n%s", \
                           color,                    \
                           type,                     \
                           ##__VA_ARGS__,            \
                           RTT_CTRL_RESET)
 
 /* 清屏*/
-#define LOG_CLEAR() SEGGER_RTT_WriteString(0, "  "RTT_CTRL_CLEAR)
+#define LOG_CLEAR() SEGGER_RTT_WriteString(0, "  " RTT_CTRL_CLEAR)
 
 /* 无颜色日志输出 */
 #define LOG(format,...) LOG_PROTO("","",format,##__VA_ARGS__)

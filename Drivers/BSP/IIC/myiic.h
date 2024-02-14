@@ -9,7 +9,7 @@
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 STM32F103开发板
+ * 实验平台:正点原子 精英F103开发板
  * 在线视频:www.yuanzige.com
  * 技术论坛:www.openedv.com
  * 公司网址:www.alientek.com
@@ -27,7 +27,10 @@
 
 #include "./SYSTEM/sys/sys.h"
 
-
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /******************************************************************************************/
 /* 引脚 定义 */
 
@@ -64,6 +67,8 @@ void iic_nack(void);            /* IIC不发送ACK信号 */
 uint8_t iic_wait_ack(void);     /* IIC等待ACK信号 */
 void iic_send_byte(uint8_t txd);/* IIC发送一个字节 */
 uint8_t iic_read_byte(unsigned char ack);/* IIC读取一个字节 */
-
+#ifdef __cplusplus
+}
+#endif
 #endif
 

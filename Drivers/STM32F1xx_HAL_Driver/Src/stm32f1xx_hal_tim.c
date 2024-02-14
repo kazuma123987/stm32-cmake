@@ -2058,18 +2058,18 @@ __weak void HAL_TIM_IC_MspDeInit(TIM_HandleTypeDef *htim)
 HAL_StatusTypeDef HAL_TIM_IC_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   uint32_t tmpsmcr;
-//  HAL_TIM_ChannelStateTypeDef channel_state = TIM_CHANNEL_STATE_GET(htim, Channel);
-//  HAL_TIM_ChannelStateTypeDef complementary_channel_state = TIM_CHANNEL_N_STATE_GET(htim, Channel);
+  HAL_TIM_ChannelStateTypeDef channel_state = TIM_CHANNEL_STATE_GET(htim, Channel);
+  HAL_TIM_ChannelStateTypeDef complementary_channel_state = TIM_CHANNEL_N_STATE_GET(htim, Channel);
 
   /* Check the parameters */
   assert_param(IS_TIM_CCX_INSTANCE(htim->Instance, Channel));
 
   /* Check the TIM channel state */
-//  if ((channel_state != HAL_TIM_CHANNEL_STATE_READY)
-//      || (complementary_channel_state != HAL_TIM_CHANNEL_STATE_READY))
-//  {
-//    return HAL_ERROR;
-//  }
+  if ((channel_state != HAL_TIM_CHANNEL_STATE_READY)
+      || (complementary_channel_state != HAL_TIM_CHANNEL_STATE_READY))
+  {
+    return HAL_ERROR;
+  }
 
   /* Set the TIM channel state */
   TIM_CHANNEL_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
@@ -2140,18 +2140,18 @@ HAL_StatusTypeDef HAL_TIM_IC_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 HAL_StatusTypeDef HAL_TIM_IC_Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   uint32_t tmpsmcr;
-//  HAL_TIM_ChannelStateTypeDef channel_state = TIM_CHANNEL_STATE_GET(htim, Channel);
-//  HAL_TIM_ChannelStateTypeDef complementary_channel_state = TIM_CHANNEL_N_STATE_GET(htim, Channel);
+  HAL_TIM_ChannelStateTypeDef channel_state = TIM_CHANNEL_STATE_GET(htim, Channel);
+  HAL_TIM_ChannelStateTypeDef complementary_channel_state = TIM_CHANNEL_N_STATE_GET(htim, Channel);
 
   /* Check the parameters */
   assert_param(IS_TIM_CCX_INSTANCE(htim->Instance, Channel));
 
   /* Check the TIM channel state */
-//  if ((channel_state != HAL_TIM_CHANNEL_STATE_READY)
-//      || (complementary_channel_state != HAL_TIM_CHANNEL_STATE_READY))
-//  {
-//    return HAL_ERROR;
-//  }
+  if ((channel_state != HAL_TIM_CHANNEL_STATE_READY)
+      || (complementary_channel_state != HAL_TIM_CHANNEL_STATE_READY))
+  {
+    return HAL_ERROR;
+  }
 
   /* Set the TIM channel state */
   TIM_CHANNEL_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);

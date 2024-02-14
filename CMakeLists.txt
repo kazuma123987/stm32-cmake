@@ -69,10 +69,12 @@ include_directories(
   ${PATH_WORKSPACE_ROOT}/Drivers/STM32F1xx_HAL_Driver/Inc
   ${PATH_WORKSPACE_ROOT}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
   ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Include
-  ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Include
+  ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Core/Include
   # 中间件头文件路径:
   ${PATH_WORKSPACE_ROOT}/Middlewares
-  ${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT
+  # 工具库头文件路径:
+  ${PATH_WORKSPACE_ROOT}/Utilities
+  ${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT
   # 应用层头文件包含路径；
   ${PATH_WORKSPACE_ROOT}/User)
 
@@ -82,12 +84,13 @@ file(
   DRIVER_SOURCE
   ${PATH_WORKSPACE_ROOT}/Drivers/BSP/24CXX/24cxx.c
   ${PATH_WORKSPACE_ROOT}/Drivers/BSP/IIC/myiic.c
-  ${PATH_WORKSPACE_ROOT}/Drivers/BSP/KEY/key.c
-  ${PATH_WORKSPACE_ROOT}/Drivers/BSP/LCD/lcd.c
   ${PATH_WORKSPACE_ROOT}/Drivers/BSP/LED/led.c
+  ${PATH_WORKSPACE_ROOT}/Drivers/BSP/LCD/lcd.c
+  ${PATH_WORKSPACE_ROOT}/Drivers/BSP/KEY/key.c
   ${PATH_WORKSPACE_ROOT}/Drivers/BSP/TOUCH/*.c
   ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
   ${PATH_WORKSPACE_ROOT}/Drivers/STM32F1xx_HAL_Driver/Src/*.c
+  ${PATH_WORKSPACE_ROOT}/Drivers/STM32F1xx_HAL_Driver/Src/Legacy/*.c
   ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/delay/delay.c
   ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/sys/sys.c)
   # ${PATH_WORKSPACE_ROOT}/Drivers/SYSTEM/usart/usart.c)
@@ -95,9 +98,12 @@ file(
 list(FILTER DRIVER_SOURCE EXCLUDE REGEX ".*_template\\.c$")
 
 # 中间层源文件
-file(GLOB MIDDLE_SOURCE 
-${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT/*.c
-${PATH_WORKSPACE_ROOT}/Middlewares/JLINK_RTT/SYSCALLS/*.c)
+# file(GLOB MIDDLE_SOURCE )
+
+# 工具库源文件
+file(GLOB UTILS_SOURCE 
+${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT/*.c
+${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT/SYSCALLS/*.c)
 
 # 用户源文件
 file(GLOB USER_SOURCE ${PATH_WORKSPACE_ROOT}/User/*.c
@@ -108,6 +114,7 @@ add_executable(
   ${CUSTOM_TARGET_NAME}
   ${DRIVER_SOURCE}
   ${MIDDLE_SOURCE}
+  ${UTILS_SOURCE}
   ${USER_SOURCE}
   ${STARTUP_FILE})
   

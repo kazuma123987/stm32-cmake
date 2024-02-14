@@ -75,7 +75,7 @@ void sys_intx_enable(void)
  */
 void sys_msr_msp(uint32_t addr)
 {
-    __set_MSP(addr);    /* 设置栈顶地址 */
+    (addr);    /* 设置栈顶地址 */
 }
 
 /**

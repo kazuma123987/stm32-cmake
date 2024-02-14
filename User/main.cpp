@@ -19,25 +19,157 @@
  */
 
 #include "./SYSTEM/sys/sys.h"
-#include "./SYSTEM/usart/usart.h"
 #include "./SYSTEM/delay/delay.h"
-#include "./USMART/usmart.h"
 #include "./BSP/LED/led.h"
 #include "./BSP/LCD/lcd.h"
 #include "./BSP/KEY/key.h"
 #include "./BSP/TOUCH/touch.h"
-#include <string.h>
+#include "JLINK_RTT/SEGGER_RTT.h"
+#include <stdio.h>
+
+/* 10个触控点的颜色(电容触摸屏用) */
+const uint16_t POINT_COLOR_TBL[10] = {RED, GREEN, BLUE, BROWN, YELLOW, MAGENTA, CYAN, LIGHTBLUE, BRRED, GRAY};
+void load_draw_dialog(void);
+void lcd_draw_bline(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t size, uint16_t color);
+void rtp_test(void);
+void ctp_test(void);
+int main(void)
+{
+    printf(RTT_CTRL_TEXT_CYAN "RTT test\n" RTT_CTRL_TEXT_WHITE);
+    HAL_Init();                         /* 初始化HAL库 */
+    sys_stm32_clock_init(RCC_PLL_MUL9); /* 设置时钟, 72Mhz */
+    delay_init(72);                     /* 延时初始化 */
+    // usart_init(115200);                 /* 串口初始化为115200 */
+
+    led_init();    /* 初始化LED */
+    lcd_init();    /* 初始化LCD */
+    key_init();    /* 初始化按键 */
+    tp_dev.init(); /* 触摸屏初始化 */
+
+    lcd_show_string(30, 50, 200, 16, 16, "STM32", RED);
+    lcd_show_string(30, 70, 200, 16, 16, "TOUCH TEST", RED);
+    lcd_show_string(30, 90, 200, 16, 16, "ATOM@ALIENTEK", RED);
+
+    if (tp_dev.touchtype != 0XFF)
+    {
+        lcd_show_string(30, 110, 200, 16, 16, "Press KEY0 to Adjust", RED); /* 电阻屏才显示 */
+    }
+
+    delay_ms(1500);
+    load_draw_dialog();
+
+    if (tp_dev.touchtype & 0X80)
+    {
+        ctp_test(); /* 电容屏测试 */
+    }
+    else
+    {
+        rtp_test(); /* 电阻屏测试 */
+    }
+}
 /**
- * @brief       清空屏幕并在右上角显示"RST"
+ * @brief       电容触摸屏测试函数
  * @param       无
  * @retval      无
  */
-void load_draw_dialog(void)
+void ctp_test(void)
 {
-    lcd_clear(WHITE);                                                /* 清屏 */
-    lcd_show_string(lcddev.width - 24, 0, 200, 16, 16, "RST", BLUE); /* 显示清屏区域 */
-}
+    uint8_t t = 0;
+    uint8_t loopCount = 0;
+    uint16_t lastpos[10][2]; /* 最后一次的数据 */
+    uint8_t maxp = 5;
 
+    if (lcddev.id == 0X1018)
+        maxp = 10;
+
+    while (1)
+    {
+        tp_dev.scan(0);
+        if (key_scan(0) == KEY0_PRES)
+            lcd_clear(WHITE);
+        for (t = 0; t < maxp; t++)
+        {
+            if ((tp_dev.sta) & (1 << t))
+            {
+                if (tp_dev.x[t] < lcddev.width && tp_dev.y[t] < lcddev.height) /* 坐标在屏幕范围内 */
+                {
+                    if (lastpos[t][0] == 0XFFFF)
+                    {
+                        lastpos[t][0] = tp_dev.x[t];
+                        lastpos[t][1] = tp_dev.y[t];
+                    }
+
+                    lcd_draw_bline(lastpos[t][0], lastpos[t][1], tp_dev.x[t], tp_dev.y[t], 2, POINT_COLOR_TBL[t]); /* 画线 */
+                    lastpos[t][0] = tp_dev.x[t];
+                    lastpos[t][1] = tp_dev.y[t];
+
+                    if (tp_dev.x[t] > (lcddev.width - 24) && tp_dev.y[t] < 20)
+                    {
+                        load_draw_dialog(); /* 清除 */
+                    }
+                }
+            }
+            else
+            {
+                lastpos[t][0] = 0XFFFF;
+            }
+        }
+
+        delay_ms(10);
+        loopCount++;
+
+        if (loopCount % 20 == 0)
+            LED0_TOGGLE();
+    }
+}
+/**
+ * @brief       电阻触摸屏测试函数
+ * @param       无
+ * @retval      无
+ */
+void rtp_test(void)
+{
+    uint8_t key;
+    uint8_t i = 0;
+
+    while (1)
+    {
+        key = key_scan(0);
+        tp_dev.scan(0);
+
+        if (tp_dev.sta & TP_PRES_DOWN) /* 触摸屏被按下 */
+        {
+            if (tp_dev.x[0] < lcddev.width && tp_dev.y[0] < lcddev.height)
+            {
+                if (tp_dev.x[0] > (lcddev.width - 24) && tp_dev.y[0] < 16)
+                {
+                    load_draw_dialog(); /* 清除 */
+                }
+                else
+                {
+                    tp_draw_big_point(tp_dev.x[0], tp_dev.y[0], RED); /* 画点 */
+                }
+            }
+        }
+        else
+        {
+            delay_ms(10); /* 没有按键按下的时候 */
+        }
+
+        if (key == KEY0_PRES) /* KEY0按下,则执行校准程序 */
+        {
+            lcd_clear(WHITE); /* 清屏 */
+            tp_adjust();      /* 屏幕校准 */
+            tp_save_adjust_data();
+            load_draw_dialog();
+        }
+
+        i++;
+
+        if (i % 20 == 0)
+            LED0_TOGGLE();
+    }
+}
 /**
  * @brief       画粗线
  * @param       x1,y1: 起点坐标
@@ -112,148 +244,13 @@ void lcd_draw_bline(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t 
         }
     }
 }
-
 /**
- * @brief       电阻触摸屏测试函数
+ * @brief       清空屏幕并在右上角显示"RST"
  * @param       无
  * @retval      无
  */
-void rtp_test(void)
+void load_draw_dialog(void)
 {
-    uint8_t key;
-    uint8_t i = 0;
-
-    while (1)
-    {
-        key = key_scan(0);
-        tp_dev.scan(0);
-
-        if (tp_dev.sta & TP_PRES_DOWN) /* 触摸屏被按下 */
-        {
-            if (tp_dev.x[0] < lcddev.width && tp_dev.y[0] < lcddev.height)
-            {
-                if (tp_dev.x[0] > (lcddev.width - 24) && tp_dev.y[0] < 16)
-                {
-                    load_draw_dialog(); /* 清除 */
-                }
-                else
-                {
-                    tp_draw_big_point(tp_dev.x[0], tp_dev.y[0], RED); /* 画点 */
-                }
-            }
-        }
-        else
-        {
-            delay_ms(10); /* 没有按键按下的时候 */
-        }
-
-        if (key == KEY0_PRES) /* KEY0按下,则执行校准程序 */
-        {
-            lcd_clear(WHITE); /* 清屏 */
-            tp_adjust();      /* 屏幕校准 */
-            tp_save_adjust_data();
-            load_draw_dialog();
-        }
-
-        i++;
-
-        if (i % 20 == 0)
-            LED0_TOGGLE();
-    }
-}
-
-/* 10个触控点的颜色(电容触摸屏用) */
-const uint16_t POINT_COLOR_TBL[10] = {RED, GREEN, BLUE, BROWN, YELLOW, MAGENTA, CYAN, LIGHTBLUE, BRRED, GRAY};
-
-/**
- * @brief       电容触摸屏测试函数
- * @param       无
- * @retval      无
- */
-void ctp_test(void)
-{
-    uint8_t t = 0;
-    uint8_t loopCount = 0;
-    uint16_t lastpos[10][2]; /* 最后一次的数据 */
-    uint8_t maxp = 5;
-
-    if (lcddev.id == 0X1018)
-        maxp = 10;
-
-    while (1)
-    {
-        tp_dev.scan(0);
-        if (key_scan(0) == KEY0_PRES)
-            lcd_clear(WHITE);
-        for (t = 0; t < maxp; t++)
-        {
-            if ((tp_dev.sta) & (1 << t))
-            {
-                if (tp_dev.x[t] < lcddev.width && tp_dev.y[t] < lcddev.height) /* 坐标在屏幕范围内 */
-                {
-                    if (lastpos[t][0] == 0XFFFF)
-                    {
-                        lastpos[t][0] = tp_dev.x[t];
-                        lastpos[t][1] = tp_dev.y[t];
-                    }
-
-                    lcd_draw_bline(lastpos[t][0], lastpos[t][1], tp_dev.x[t], tp_dev.y[t], 2, POINT_COLOR_TBL[t]); /* 画线 */
-                    lastpos[t][0] = tp_dev.x[t];
-                    lastpos[t][1] = tp_dev.y[t];
-
-                    if (tp_dev.x[t] > (lcddev.width - 24) && tp_dev.y[t] < 20)
-                    {
-                        load_draw_dialog(); /* 清除 */
-                    }
-                }
-            }
-            else
-            {
-                lastpos[t][0] = 0XFFFF;
-            }
-        }
-
-        delay_ms(10);
-        loopCount++;
-
-        if (loopCount % 20 == 0)
-            LED0_TOGGLE();
-    }
-}
-#include "JLINK_RTT/SEGGER_RTT.h"
-int main(void)
-{
-    printf(RTT_CTRL_TEXT_CYAN
-    "RTT test\n"
-    RTT_CTRL_TEXT_WHITE);
-    HAL_Init();                         /* 初始化HAL库 */
-    sys_stm32_clock_init(RCC_PLL_MUL9); /* 设置时钟, 72Mhz */
-    delay_init(72);                     /* 延时初始化 */
-    // usart_init(115200);                 /* 串口初始化为115200 */
-
-    led_init();    /* 初始化LED */
-    lcd_init();    /* 初始化LCD */
-    key_init();    /* 初始化按键 */
-    tp_dev.init(); /* 触摸屏初始化 */
-
-    lcd_show_string(30, 50, 200, 16, 16, "STM32", RED);
-    lcd_show_string(30, 70, 200, 16, 16, "TOUCH TEST", RED);
-    lcd_show_string(30, 90, 200, 16, 16, "ATOM@ALIENTEK", RED);
-
-    if (tp_dev.touchtype != 0XFF)
-    {
-        lcd_show_string(30, 110, 200, 16, 16, "Press KEY0 to Adjust", RED); /* 电阻屏才显示 */
-    }
-
-    delay_ms(1500);
-    load_draw_dialog();
-
-    if (tp_dev.touchtype & 0X80)
-    {
-        ctp_test(); /* 电容屏测试 */
-    }
-    else
-    {
-        rtp_test(); /* 电阻屏测试 */
-    }
+    lcd_clear(WHITE);                                                /* 清屏 */
+    lcd_show_string(lcddev.width - 24, 0, 200, 16, 16, "RST", BLUE); /* 显示清屏区域 */
 }

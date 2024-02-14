@@ -7,7 +7,17 @@
         "delay.h": "c",
         "stdio.h": "c",
         "stm32f1xx.h": "c",
-        "usart.h": "c"
+        "usart.h": "c",
+        "cmsis_compiler.h": "c",
+        "stdint.h": "c",
+        "stm32f103xe.h": "c",
+        "malloc.h": "c",
+        "stm32f1xx_hal.h": "c",
+        "core_cm3.h": "c",
+        "system_stm32f1xx.h": "c",
+        "cmsis_version.h": "c",
+        "mpu_armv7.h": "c",
+        "cmsis_gcc.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": false
 }

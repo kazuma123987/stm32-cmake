@@ -26,7 +26,10 @@
 #define __norflash_H
 
 #include "./SYSTEM/sys/sys.h"
-
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /******************************************************************************************/
 /* NORFLASH 片选 引脚 定义 */
@@ -103,7 +106,9 @@ void norflash_erase_chip(void);             /* 整片擦除 */
 void norflash_erase_sector(uint32_t saddr); /* 扇区擦除 */
 void norflash_read(uint8_t *pbuf, uint32_t addr, uint16_t datalen);     /* 读取flash */
 void norflash_write(uint8_t *pbuf, uint32_t addr, uint16_t datalen);    /* 写入flash */
-
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 

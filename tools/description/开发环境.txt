@@ -55,7 +55,7 @@ CMakeLists.txt(必需):
 .vscode/c_cpp_properties.json:
     按住Ctrl+Shift+P键调用"C/C++编译配置(UI)"设置你的头文件路径(可以识别include)、
     编译器路径(可以设置更准确的IntelliSense)、IntelliSense模式(指定IntelliSense的平台)、C/C++标准(仅适用于gcc)、
-    宏定义(十分重要,有利于IntelliSense分析,否则一片红色错误)
+    宏定义(必需设置stm32宏定义,否则IntelliSense一堆错误)
 
 .vscode/tasks.json(必需):
     1.如果使用openocd调试,修改1.download(openocd)中的args中的program ./build/demo.bin 0x08000000为你的.bin路径、起始地址

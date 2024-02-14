@@ -27,7 +27,10 @@
 
 #include "./SYSTEM/sys/sys.h"
 
-
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /******************************************************************************************/
 /* SPI2 引脚 定义 */
 
@@ -89,7 +92,9 @@ uint8_t spi2_read_write_byte(uint8_t txdata);
 void spi1_init(void);
 void spi1_set_speed(uint8_t speed);
 uint8_t spi1_read_write_byte(uint8_t txdata);
-
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 
