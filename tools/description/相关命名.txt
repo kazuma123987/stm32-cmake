@@ -1,0 +1,11 @@
+ICode:instruction指令单元,通过总线矩阵与flash相连,其总线可理解为指令总线
+DCode:data数据单元,通过总线矩阵与flash相连,其总线可理解为数据总线
+AHB(Advanced High-performance Bus):高级高性能总线,与总线矩阵相连
+APB(Advanced Peripheral Bus):高级外设总线,通过AHB桥与AHB总线相连,APB总线根据外设工作频率分为APB1、APB2不同频率的总线
+HSE(High Speed External):外部高速晶振
+HSI(High Speed Internal):内部高速晶振(通过内部RC振荡器等电路产生)
+LSE(Low Speed External):外部低速晶振
+LSI(Low Speed Internal):内部低速晶振
+GPIOx_ODR(x表示A,B...E):即GPIOx Output Data Register,表示gpio数据输出寄存器
+HAL_XXX_MspInit:(Hardware Abstract Layer)_XXX_(Microcontroller Support Package Init)
+HAL_XXX_ProcessCpltCallback:Cplt表示Complete,即完成时的回调函数    

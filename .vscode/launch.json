@@ -8,7 +8,7 @@
             "type": "cortex-debug",
             "servertype": "jlink",
             "runToEntryPoint": "main",
-            "svdFile": "tools/STM32F103.svd",
+            "svdFile": "tools/SVD/STM32F103xx.svd",
             "serverArgs": ["-speed","4000"],
             "device": "STM32F103ZE",
             "interface": "swd",

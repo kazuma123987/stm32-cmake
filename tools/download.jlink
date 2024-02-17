@@ -1,5 +1,4 @@
-reset
-erase
-loadfile build/demo.bin 0x0 
+loadfile ./build/demo.bin, 0x08000000 
 r 
-qc 
+g 
+exit 

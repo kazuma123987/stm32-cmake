@@ -25,6 +25,7 @@ set(CPU_FLAGS_ASM "--cpu=Cortex-M3")
 set(FPU_FLAGS "")
 set(FPU_FLAGS_ASM "")
 # 设置编译选项一般XXX_FLAGS代表全局的,XXX_FLAGS_DEBUG表示额外新增的
+# 启用lto精简代码,需要设置C/CXX flags为-flto,同时链接器加上--lto
 # 设置armcc编译选项
 set(CMAKE_C_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} -xc -std=c99 -fno-function-sections -funsigned-char -fno-rtti  -fshort-enums \
 -fshort-wchar -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion \
@@ -45,10 +46,9 @@ set(CMAKE_ASM_FLAGS_DEBUG "-g")
 set(CMAKE_ASM_FLAGS_RELEASE "")
 # 设置链接选项
 set(LINKER_FILE_FLAGS "--scatter")
-set(LINKER_FLAGS "--cpu=Cortex-M3 --lto --strict \
---summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols \
---info sizes --info totals --info unused --info veneers --output=${PROJECT_NAME}.axf --ro-base=0x08000000 \
---rw-base=0x20000000 --first=__Vectors")
+set(LINKER_FLAGS "${CPU_FLAGS_ASM} ${FPU_FLAGS_ASM} --lto --strict --summary_stderr \
+--info=summarysizes,totals,unused,veneers --map --load_addr_map_info --xref --callgraph --symbols \
+--ro-base=0x08000000 --rw-base=0x20000000 --first=__Vectors")
 # 设置elf转换工具的选项
 set(OBJCOPY_BIN "--bincombined")
 set(OBJCOPY_HEX "--i32combined")
@@ -66,3 +66,35 @@ set(ColorMagenta "${Esc}[0;35m") # 品红色
 
 ################ armclang的编译选项 ################
 #-fshort-enums -fshort-wchar:enum范围从int变为short,wchar从int变为short
+
+####armlink:####
+# armlink [option1] [option2] ... 
+# 详见https://www.cnblogs.com/bigworld/archive/2011/11/26/2264093.html
+# 一般 --option value可以写成 --option=value
+# options介绍: 
+#   a.运行内存区域和加载内存区域设置:
+#       --scatter xxx.sct 同ld -T xxx.ld,
+#       --entry=Reset_Handler:设置入口函数
+#       --first=RESET:设置RESET段(.s文件中声明的中断向量表)为区域的第一个段
+#       --last=xxx:与--first相反 
+#       --ro-base=0x08000000 --rw-base=0x20000000 :设置rom或ram基址
+#   b.命令行信息显示:
+#       --info=summarysizes:编译完成后在终端输出程序的大小
+#       --summary_stderr:如果--info=summarysizes,则把summarysizes传到stderr缓冲区(立即刷新)
+#       --no_summary_stderr:与上述相反
+#   c.生成相关调试文件:
+#       --map:生成.map文件,与map文件相关的参数如下:
+#           1)--info=sizes:为每一个使用到.o文件和库文件列出了代码和数据(RO、RW、ZI、Debug)的大小,包含了--info=totals的所有内容
+#           2)--info=totals:列出大致的.o文件和库文件大小,以及总的elf文件大小和RO、RW、ZI总大小
+#           3)--info=unused:显示因为链接器的-remove选项被移除的所有段,-remove选项默认开启,-noremove可以禁用
+#           4)--info=veneers:显示armlink生成的veneers信息
+#           5)--load_addr_map_info:在map文件中显示运行域的加载地址
+#           6)--xref:在map文件中生成不同文件的相互引用信息(引用变量、函数等)
+#           7)--symbols:列出本地和全局段的大小、地址、文件信息
+#       --callgraph:生成.htm文件,这是一个html文件,打开后可以显示函数调用关系和函数的栈大小
+#   d.代码错误检查:
+#       --strict:对目标文件进行严格检查,严格选项与错误严重程度无直接关联.通常添加严格选项是因为标准链接器检查不够精确,
+#       或者在处理旧对象时可能会产生噪音。
+#           
+#   
+#
