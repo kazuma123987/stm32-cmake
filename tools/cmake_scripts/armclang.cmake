@@ -48,7 +48,7 @@ set(CMAKE_ASM_FLAGS_RELEASE "")
 set(LINKER_FILE_FLAGS "--scatter")
 set(LINKER_FLAGS "${CPU_FLAGS_ASM} ${FPU_FLAGS_ASM} --lto --strict --summary_stderr \
 --info=summarysizes,totals,unused,veneers --map --load_addr_map_info --xref --callgraph --symbols \
---ro-base=0x08000000 --rw-base=0x20000000 --first=__Vectors")
+--ro-base=0x08000000 --rw-base=0x20000000 --first=__Vectors --entry=Reset_Handler")
 # 设置elf转换工具的选项
 set(OBJCOPY_BIN "--bincombined")
 set(OBJCOPY_HEX "--i32combined")

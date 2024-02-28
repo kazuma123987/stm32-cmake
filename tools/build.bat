@@ -7,7 +7,7 @@ if not exist build (
 )
 cd build || exit
 del "./*" --recurse
-cmake -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="../tools/cmake_scripts/cortex_m3.cmake" -D_USE_GCC=ON ^
+cmake -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="../tools/cmake_scripts/armcc.cmake" -D_USE_GCC=OFF ^
 -DCMAKE_C_COMPILER_FORCED=ON -DCMAKE_CXX_COMPILER_FORCED=ON -DCMAKE_BUILD_TYPE=%1 -DOUTPUT_EXE_NAME=%BIN_NAME% ..
 cmake --build . -j --target=all
 endlocal

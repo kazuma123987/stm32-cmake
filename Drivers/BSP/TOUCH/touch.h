@@ -127,17 +127,6 @@ typedef struct
 
 extern _m_tp_dev tp_dev;        /* 触屏控制器在touch.c里面定义 */
 
-
-/* 电阻屏函数 */
-
-static void tp_write_byte(uint8_t data);                /* 向控制芯片写入一个数据 */
-static uint16_t tp_read_ad(uint8_t cmd);                /* 读取AD转换值 */
-static uint16_t tp_read_xoy(uint8_t cmd);               /* 带滤波的坐标读取(X/Y) */
-static void tp_read_xy(uint16_t *x, uint16_t *y);       /* 双方向读取(X+Y) */
-static uint8_t tp_read_xy2(uint16_t *x, uint16_t *y);   /* 带加强滤波的双方向坐标读取 */
-static void tp_draw_touch_point(uint16_t x, uint16_t y, uint16_t color);    /* 画一个坐标校准点 */
-static void tp_adjust_info_show(uint16_t xy[5][2], double px, double py);   /* 显示校准信息 */
-
 uint8_t tp_init(void);              /* 初始化 */
 uint8_t tp_scan(uint8_t mode);      /* 扫描 */
 void tp_adjust(void);               /* 触摸屏校准 */

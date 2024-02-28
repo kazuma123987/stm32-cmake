@@ -1054,7 +1054,7 @@ void lcd_fill_circle(uint16_t x, uint16_t y, uint16_t r, uint16_t color)
  * @param       color : 字符的颜色;
  * @retval      无
  */
-void lcd_show_char(uint16_t x, uint16_t y, char chr, uint8_t size, uint8_t mode, uint16_t color)
+void lcd_show_char(uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint8_t mode, uint16_t color)
 {
     uint8_t temp, t1, t;
     uint16_t y0 = y;

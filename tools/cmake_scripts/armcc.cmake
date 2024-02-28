@@ -25,11 +25,11 @@ set(CPU_FLAGS "--apcs=interwork --cpu Cortex-M3")
 set(FPU_FLAGS "")
 # 设置编译选项一般XXX_FLAGS代表全局的,XXX_FLAGS_DEBUG表示额外新增的
 # 设置armcc编译选项
-set(CMAKE_C_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} --c99 --split_sections")
+set(CMAKE_C_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} --c99 --split_sections --diag_suppress=1 --diag_suppress=1295")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
 # 设置armcc的c++编译选项
-set(CMAKE_CXX_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} --apcs=interwork --cpu Cortex-M3 --cpp11 --split_sections")
+set(CMAKE_CXX_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} --cpp11 --split_sections --diag_suppress=1 --diag_suppress=1295")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 # 设置armasm编译选项
