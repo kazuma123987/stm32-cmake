@@ -1,0 +1,1 @@
+set(__ARMCC_VERSION 6016042)

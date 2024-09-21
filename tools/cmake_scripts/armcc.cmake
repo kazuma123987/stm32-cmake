@@ -1,6 +1,3 @@
-# 目标平台名称；
-set(CMAKE_SYSTEM_NAME Generic)
-
 # 编译工具链； 请确保已经添加到环境变量； 如果使用的是 linux 环境，需要将后面的 '.exe' 移除；
 set(CMAKE_C_COMPILER armcc.exe)
 set(CMAKE_CXX_COMPILER armcc.exe)
@@ -20,9 +17,6 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
-#设置CPU和FPU的编译选项
-set(CPU_FLAGS "--apcs=interwork --cpu Cortex-M3")
-set(FPU_FLAGS "")
 # 设置编译选项一般XXX_FLAGS代表全局的,XXX_FLAGS_DEBUG表示额外新增的
 # 设置armcc编译选项
 set(CMAKE_C_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} --c99 --split_sections --diag_suppress=1 --diag_suppress=1295")
@@ -33,12 +27,12 @@ set(CMAKE_CXX_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} --cpp11 --split_sections --diag_s
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 # 设置armasm编译选项
-set(CMAKE_ASM_FLAGS "${MCPU_FLAGS} ${FPU_FLAGS} --apcs=interwork --cpu Cortex-M3 --list=demo.lst")
+set(CMAKE_ASM_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} --apcs=interwork --cpu Cortex-M3 --list=demo.lst")
 set(CMAKE_ASM_FLAGS_DEBUG "-g")
 set(CMAKE_ASM_FLAGS_RELEASE "")
 # 设置链接选项
 set(LINKER_FILE_FLAGS "--scatter")
-set(LINKER_FLAGS "${MCPU_FLAGS} --entry=Reset_Handler --strict --summary_stderr \
+set(LINKER_FLAGS "${CPU_FLAGS} --entry=Reset_Handler --strict --summary_stderr \
 --info=summarysizes,sizes,totals,unused,veneers --map --xref --callgraph --symbols \
 --ro-base=0x08000000 --rw-base=0x20000000 --first=__Vectors")
 # 设置elf转换工具的选项

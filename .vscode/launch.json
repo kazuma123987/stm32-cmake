@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Cortex Debug",
+            "name": "Jlink Debug",
             "executable": "./build/demo.elf",
             "request": "launch",
             "type": "cortex-debug",
@@ -12,6 +12,20 @@
             "serverArgs": ["-speed","4000"],
             "device": "STM32F103ZE",
             "interface": "swd",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Debug"
+        },
+        {
+            "name": "Openocd Debug",
+            "executable": "./build/demo.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "runToEntryPoint": "main",
+            "svdFile": "tools/SVD/STM32F103xx.svd",
+            "configFiles": [
+                "tools/openocd.cfg"
+            ],
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "Debug"
         }

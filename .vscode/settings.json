@@ -17,7 +17,8 @@
         "system_stm32f1xx.h": "c",
         "cmsis_version.h": "c",
         "mpu_armv7.h": "c",
-        "cmsis_gcc.h": "c"
+        "cmsis_gcc.h": "c",
+        "cmsis_armcc.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": false
 }

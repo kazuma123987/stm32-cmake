@@ -10,6 +10,7 @@ set(CMAKE_SIZE "arm-none-eabi-size.exe")
 
 # 生成 compile_commands.json，可配合 clangd 实现精准的代码关联与跳转；
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
+
 # 彩色日志输出；
 set(CMAKE_COLOR_DIAGNOSTICS True)
 
@@ -24,25 +25,26 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # 包含gcc头文件路径
 # set(SYSTEM_PATH "-isystem D:/ARM_GCC/arm-none-eabi/include")
-
 set(COMMON_FLAGS "--specs=nano.specs --specs=nosys.specs -Wall \
 -fmessage-length=0 -ffunction-sections -fdata-sections")
 
-# 定义C语言编译参数(${MCPU_FLAGS}:处理器内核信息 ${VFP_FLAGS}:浮点运算单元类型):
-#  arm-none-eabi-gcc命令行千万不要加-x c或-xc,否则会报错上万个
-set(CMAKE_C_FLAGS "-std=c99 ${MCPU_FLAGS} ${VFP_FLAGS} ${COMMON_FLAGS}")
+# 定义C语言编译参数(${CPU_FLAGS}:处理器内核信息 ${FPU_FLAGS}:浮点运算单元类型):
+# arm-none-eabi-gcc命令行千万不要加-x c或-xc,否则会报错上万个
+set(CMAKE_C_FLAGS "-std=c99 ${CPU_FLAGS} ${FPU_FLAGS} ${COMMON_FLAGS}")
 set(CMAKE_C_FLAGS_RELEASE "-Os")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -g")
 set(CMAKE_C_FLAGS_MINSIZEREL "-Os")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
-#定义C++编译参数
-set(CMAKE_CXX_FLAGS "-std=c++11 ${MCPU_FLAGS} ${VFP_FLAGS} ${COMMON_FLAGS}")
+
+# 定义C++编译参数
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CPU_FLAGS} ${FPU_FLAGS} ${COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-Os -fno-exceptions")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Os -g  -fno-exceptions")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -fno-exceptions")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fno-exceptions")
-#设置汇编语言(ASM)编译参数
-set(CMAKE_ASM_FLAGS "${MCPU_FLAGS} ${VFP_FLAGS} -x assembler-with-cpp")
+
+# 设置汇编语言(ASM)编译参数
+set(CMAKE_ASM_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} -x assembler-with-cpp")
 set(CMAKE_ASM_FLAGS_RELEASE "")
 set(CMAKE_ASM_FLAGS_RELWITHDEBINFO "-g")
 set(CMAKE_ASM_FLAGS_MINSIZEREL "")
@@ -50,7 +52,8 @@ set(CMAKE_ASM_FLAGS_DEBUG "-g")
 
 # 设置链接参数
 set(LINKER_FILE_FLAGS "-T")
-set(LINKER_FLAGS "${MCPU_FLAGS} ${VFP_FLAGS} -Wl,-Map=${PROJECT_NAME}.map,--gc-sections,--print-memory-usage")
+set(LINKER_FLAGS "${CPU_FLAGS} ${FPU_FLAGS} -Wl,-Map=${PROJECT_NAME}.map,--gc-sections,--print-memory-usage")
+
 # 设置elf转换工具的选项(这里是自定义的变量,用于在CMakeLists自定义构建命令中生成hex和bin文件)
 set(OBJCOPY_BIN "-Obinary")
 set(OBJCOPY_HEX "-Oihex")

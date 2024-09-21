@@ -1,8 +1,12 @@
-# 设置工作根目录
-set(PATH_WORKSPACE_ROOT ${CMAKE_SOURCE_DIR})
-
 # 设置CMAKE最低版本
 cmake_minimum_required(VERSION 3.22)
+
+# 选择编译器和cpu的cmake脚本
+include(${CMAKE_SOURCE_DIR}/tools/cmake_scripts/armcc_define.cmake)
+include(${CMAKE_SOURCE_DIR}/tools/cmake_scripts/cortex_m3.cmake)
+
+# 设置工作根目录
+set(PATH_WORKSPACE_ROOT ${CMAKE_SOURCE_DIR})
 
 # 设置当前的工程名称
 project(
@@ -24,14 +28,14 @@ add_definitions(-DUSE_HAL_DRIVER -DSTM32F103xE -DSTM32F10X_HD)
 
 # 根据是否使用gcc编译器设置target、链接脚本、链接器命令行参数、汇编文件、是否启用axf到elf的转换
 # 如果不适用可以不用填写
-if(_USE_GCC)
+if(__GNUC__)
   set(CUSTOM_TARGET_NAME ${OUTPUT_EXE_NAME}.elf)
   set(CUSTOM_OUTPUT_NAME ${OUTPUT_EXE_NAME}.elf)
   set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/tools/linker_scripts/gcc/STM32F103XE_FLASH.ld)
   set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS} ${LINKER_FILE_FLAGS} ${LINKER_SCRIPT}")
   set(STARTUP_FILE ${PATH_WORKSPACE_ROOT}/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xe.s)
   set(CONVERT_COMMAND "")
-else()
+elseif(__ARMCC_VERSION)
   set(CUSTOM_TARGET_NAME ${OUTPUT_EXE_NAME})
   set(CUSTOM_OUTPUT_NAME ${OUTPUT_EXE_NAME}.axf)
   set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/tools/linker_scripts/arm/demo.sct)
@@ -48,7 +52,9 @@ else()
   get_filename_component(FROMELF_PRE_DIR ${FROMELF_DIR} DIRECTORY)
   set(CONVERT_COMMAND axf2elf -d ${FROMELF_PRE_DIR} -b ".\\${OUTPUT_EXE_NAME}.bin" -i ".\\${OUTPUT_EXE_NAME}.axf" -o ".\\${OUTPUT_EXE_NAME}.elf" > ".\\${OUTPUT_EXE_NAME}.log")
 
-  # 上面等同于arm-none-eabi-objcopy --update-section ER_RO=".\demo.bin" ".\demo.elf" ".\demo.elf"
+# 上面等同于arm-none-eabi-objcopy --update-section ER_RO=".\demo.bin" ".\demo.elf" ".\demo.elf"
+else()
+  message(FATAL_ERROR "ERROR::unknown compiler")
 endif()
 
 # 输出编译类型
@@ -124,8 +130,15 @@ list(FILTER DRIVER_SOURCE EXCLUDE REGEX ".*_template\\.c$")
 
 # 工具库源文件
 file(GLOB UTILS_SOURCE
-  ${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT/*.c
-  ${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT/SYSCALLS/*.c)
+  ${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT/*.c)
+
+if(__ARMCC_VERSION)
+  if(__ARMCC_VERSION GREATER_EQUAL 6010050)
+    file(GLOB UTILS_SOURCE ${UTILS_SOURCE} ${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT/SYSCALLS/*.c)
+  endif()
+elseif(__GNUC__)
+  file(GLOB UTILS_SOURCE ${UTILS_SOURCE} ${PATH_WORKSPACE_ROOT}/Utilities/JLINK_RTT/SYSCALLS/*.c)
+endif()
 
 # 用户源文件
 file(GLOB USER_SOURCE ${PATH_WORKSPACE_ROOT}/User/*.c
